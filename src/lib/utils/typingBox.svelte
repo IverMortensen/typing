@@ -2,8 +2,8 @@
   let { input_words } = $props();
 
   let user_input = $state('');
-  const space_char = '•';
-  let words = $derived(input_words.join(space_char));
+  const space_char = '\u200B';
+  let words = $derived(input_words.join('\u200B'));
 
   function getExpectedChar(displayChar: string): string {
     return displayChar === space_char ? ' ' : displayChar;
@@ -20,13 +20,13 @@
 
 <div class="text-box" tabindex="0" role="textbox" onkeydown={handleKeyDown}>
   {#each words as char, i}
-    <span
+    <letter
       class:correct-char={user_input[i] === getExpectedChar(char)}
       class:incorrect-char={user_input[i] !== getExpectedChar(char) && i < user_input.length}
-      class:space-char={char === space_char}
+      class:space-char={char === '\u200B'}
     >
       {char}
-    </span>
+    </letter>
   {/each}
 </div>
 
@@ -40,9 +40,10 @@
     border: 3px solid #cccdce;
     border-radius: 8px;
     padding: 20px;
-    font-size: 20px;
+    font-size: 30px;
     line-height: 1.6;
     min-height: 100px;
+    white-space: pre-wrap;
     word-wrap: break-word;
     position: relative;
     font-family: 'Courier New', monospace;
@@ -58,9 +59,10 @@
     color: #f25255;
   }
 
-  .space-char {
+  .space-char::before {
     font-size: 0.6em;
     margin: 0 0.25em;
     vertical-align: middle;
+    content: '•';
   }
 </style>
