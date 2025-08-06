@@ -11,12 +11,18 @@
   });
 </script>
 
-<div>
+<div class="typing-container">
   <TypingBox input_words={words}></TypingBox>
 </div>
 
 <style>
   :global(body) {
     background-color: rgb(28, 28, 28);
+  }
+
+  .typing-container {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 2rem;
   }
 </style>
