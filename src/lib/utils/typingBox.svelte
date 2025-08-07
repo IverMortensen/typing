@@ -1,24 +1,15 @@
 <script lang="ts">
-  let { input_words } = $props();
+  let { input_words, user_input } = $props();
 
-  let user_input = $state('');
   const space_char = '\u200B';
   let words = $derived(input_words.join('\u200B'));
 
   function getExpectedChar(displayChar: string): string {
     return displayChar === space_char ? ' ' : displayChar;
   }
-
-  function handleKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Backspace') {
-      user_input = user_input.slice(0, -1);
-    } else if (event.key.length === 1) {
-      user_input += event.key;
-    }
-  }
 </script>
 
-<div class="text-box" tabindex="0" role="textbox" onkeydown={handleKeyDown}>
+<div class="text-box">
   {#each words as char, i}
     <letter
       class:correct-char={user_input[i] === getExpectedChar(char)}
@@ -31,12 +22,8 @@
 </div>
 
 <style>
-  :global(body) {
-    background-color: rgb(28, 28, 28);
-  }
-
   .text-box {
-    background: #f8f9fa;
+    background: #ededed;
     border: 3px solid #cccdce;
     border-radius: 8px;
     padding: 20px;
@@ -48,7 +35,7 @@
     position: relative;
     font-family: 'Courier New', monospace;
     font-weight: 600;
-    color: rgb(28, 28, 28);
+    color: rgb(50, 50, 50);
   }
 
   .correct-char {
