@@ -8,7 +8,7 @@
 
   let words: string[] = $state([]);
   let allWords: string[] = $state([]);
-  let num_words = 10;
+  let num_words = 18;
   let userInput = $state('');
   let wpm: number = $state(0);
   let startTime: number | null = null;

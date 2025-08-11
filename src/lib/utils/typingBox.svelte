@@ -38,6 +38,7 @@
     font-family: 'Courier New', monospace;
     font-weight: 600;
     color: rgb(50, 50, 50);
+    cursor: pointer;
   }
 
   .text-box.focused {
