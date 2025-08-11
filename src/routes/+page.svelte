@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { loadWords } from '$lib/utils/loadWords';
   import TypingBox from '$lib/utils/typingBox.svelte';
   import Results from '$lib/utils/results.svelte';
   import { calculateWPM } from '$lib/utils/calculateWPM';
+  import { getRandomWords } from '$lib/utils/getRandomWords';
+  import { loadWords } from '$lib/utils/loadWords';
+  import { onMount } from 'svelte';
 
   let words: string[] = $state([]);
+  let allWords: string[] = $state([]);
   let num_words = 10;
   let userInput = $state('');
   let wpm: number = $state(0);
@@ -13,43 +15,58 @@
   let isTypingComplete = $state(false);
   let expectedText = $state('');
 
-  function getRandomWords(arr: string[], count: number) {
-    let length = Math.min(count, arr.length);
-
-    const result = [];
-    for (let i = 0; i < length; i++) {
-      const index = Math.floor(Math.random() * arr.length);
-      result.push(arr[index]);
+  function endTypingTest() {
+    if (!startTime) {
+      return;
     }
-    return result;
+    const endTime = Date.now();
+    const timeElapsed = (endTime - startTime) / 1000 / 60;
+    wpm = calculateWPM(expectedText, userInput, timeElapsed);
+    isTypingComplete = true;
+  }
+
+  function resetTypingTest() {
+    words = getRandomWords(allWords, num_words);
+    expectedText = words.join(' ');
+    startTime = null;
+    userInput = '';
+    wpm = 0;
+    isTypingComplete = false;
   }
 
   onMount(async () => {
-    words = getRandomWords(await loadWords(), num_words);
-    expectedText = words.join(' ');
+    allWords = await loadWords();
+    resetTypingTest();
   });
 
   $effect(() => {
-    if (userInput.length === expectedText.length && startTime !== null && !isTypingComplete) {
-      const endTime = Date.now();
-      const timeElapsed = (endTime - startTime) / 1000 / 60; // Convert to minutes
-      wpm = calculateWPM(expectedText, userInput, timeElapsed);
-      isTypingComplete = true;
+    if (userInput.length >= expectedText.length && !isTypingComplete) {
+      endTypingTest();
     }
   });
 
   function handleKeyDown(event: KeyboardEvent) {
-    if (userInput.length === expectedText.length) {
+    if (
+      event.key === 'Enter' ||
+      event.key === 'Escape' ||
+      (isTypingComplete && event.key === ' ')
+    ) {
+      resetTypingTest();
       return;
     }
+
     if (startTime === null && event.key.length === 1) {
       startTime = Date.now();
     }
 
     if (event.key === 'Backspace') {
       userInput = userInput.slice(0, -1);
-    } else if (event.key.length === 1) {
+      return;
+    }
+
+    if (event.key.length === 1) {
       userInput += event.key;
+      return;
     }
   }
 </script>
@@ -58,9 +75,11 @@
   <TypingBox input_words={words} user_input={userInput}></TypingBox>
 </div>
 
-<div class="result-container">
-  <Results {wpm}></Results>
-</div>
+{#if isTypingComplete}
+  <div class="result-container">
+    <Results {wpm}></Results>
+  </div>
+{/if}
 
 <style>
   :global(body) {
