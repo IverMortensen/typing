@@ -1,8 +1,9 @@
 <script lang="ts">
+  import { fly, fade } from 'svelte/transition';
   let { wpm } = $props();
 </script>
 
-<div class="results-box">
+<div class="results-box" in:fly={{ y: 200, duration: 500 }} out:fade>
   <div class="wpm">
     {wpm}wpm
   </div>
