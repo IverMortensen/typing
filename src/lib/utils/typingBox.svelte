@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { input_words, user_input } = $props();
+  let { input_words, user_input, isFocused } = $props();
 
   const space_char = '\u200B';
   let words = $derived(input_words.join('\u200B'));
@@ -9,9 +9,11 @@
   }
 </script>
 
-<div class="text-box">
+<div class="text-box" class:focused={isFocused}>
   {#each words as char, i}
     <letter
+      class="char"
+      class:focused={isFocused}
       class:correct-char={user_input[i] === getExpectedChar(char)}
       class:incorrect-char={user_input[i] !== getExpectedChar(char) && i < user_input.length}
       class:space-char={char === '\u200B'}
@@ -24,10 +26,10 @@
 <style>
   .text-box {
     background: #ededed;
-    border: 3px solid #cccdce;
+    border: 4px solid #cccdce;
     border-radius: 8px;
     padding: 20px;
-    font-size: 30px;
+    font-size: 35px;
     line-height: 1.6;
     min-height: 100px;
     white-space: pre-wrap;
@@ -36,6 +38,18 @@
     font-family: 'Courier New', monospace;
     font-weight: 600;
     color: rgb(50, 50, 50);
+  }
+
+  .text-box.focused {
+    border: 4px solid #e8ad86;
+  }
+
+  .char {
+    filter: blur(2px);
+  }
+
+  .char.focused {
+    filter: blur(0px);
   }
 
   .correct-char {

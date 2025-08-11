@@ -14,6 +14,7 @@
   let startTime: number | null = null;
   let isTypingComplete = $state(false);
   let expectedText = $state('');
+  let isFocused = $state(false);
 
   function endTypingTest() {
     if (!startTime) {
@@ -71,25 +72,60 @@
   }
 </script>
 
-<div class="typing-container" tabindex="0" role="textbox" onkeydown={handleKeyDown}>
-  <TypingBox input_words={words} user_input={userInput}></TypingBox>
-</div>
-
-{#if isTypingComplete}
-  <div class="result-container">
-    <Results {wpm}></Results>
+<div class="body">
+  <h1 class="title">Typing Trainer</h1>
+  <div
+    class="typing-container"
+    tabindex="0"
+    role="textbox"
+    onfocus={() => {
+      isFocused = true;
+    }}
+    onblur={() => {
+      isFocused = false;
+    }}
+    onkeydown={handleKeyDown}
+  >
+    <TypingBox input_words={words} user_input={userInput} {isFocused}></TypingBox>
   </div>
-{/if}
+
+  {#if isTypingComplete}
+    <div class="result-container">
+      <Results {wpm}></Results>
+    </div>
+  {/if}
+</div>
 
 <style>
   :global(body) {
     background-color: rgb(28, 28, 28);
   }
 
+  .body {
+    height: 100vh;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: 45px;
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    color: #f7904c;
+    margin: 0 auto;
+    display: flex;
+    padding-left: 2rem;
+    padding-top: 4rem;
+    padding-bottom: 0.5rem;
+    max-width: 80%;
+  }
+
   .typing-container {
     max-width: 80%;
     margin: 0 auto;
     padding: 2rem;
+    outline: none;
   }
 
   .result-container {
