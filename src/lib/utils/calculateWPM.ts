@@ -13,5 +13,8 @@ export function calculateWPM(chars: string, userInput: string, time: number) {
 
 	let wpm = (numChars / 5 - wrongChars) / time;
 
+	if (wpm < 0) {
+		return 0;
+	}
 	return Math.round(wpm);
 }
