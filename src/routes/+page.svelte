@@ -2,6 +2,7 @@
   import TypingBox from '$lib/utils/typingBox.svelte';
   import Results from '$lib/utils/results.svelte';
   import { calculateWPM } from '$lib/utils/calculateWPM';
+  import { deleteCurrentWord } from '$lib/utils/deleteLastWord';
   import { getRandomWords } from '$lib/utils/getRandomWords';
   import { loadWords } from '$lib/utils/loadWords';
   import { onMount } from 'svelte';
@@ -56,8 +57,17 @@
       return;
     }
 
+    if (isTypingComplete) {
+      return;
+    }
+
     if (startTime === null && event.key.length === 1) {
       startTime = Date.now();
+    }
+
+    if ((event.ctrlKey || event.altKey) && event.key === 'Backspace') {
+      userInput = deleteCurrentWord(userInput, words.join(' '));
+      return;
     }
 
     if (event.key === 'Backspace') {
